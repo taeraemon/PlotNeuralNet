@@ -1,0 +1,416 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{./layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SumColor{rgb:blue,5;green,15}
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+\pic[shift={(-8,0,0)}] at (0,0,0) 
+    {Box={
+        name=template_0,
+        caption=$T_{0}$,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=12,
+        width=2,
+        depth=12
+        }
+    };
+
+\pic[shift={(-8,-4,0)}] at (0,0,0) 
+    {Box={
+        name=template_i-1,
+        caption=$T_{i-1}$,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=12,
+        width=2,
+        depth=12
+        }
+    };
+
+\pic[shift={(-8,-8,0)}] at (0,0,0) 
+    {Box={
+        name=template_i,
+        caption=$T_{i}$,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=12,
+        width=2,
+        depth=12
+        }
+    };
+
+\pic[shift={(-5,0,0)}] at (0,0,0) 
+    {Box={
+        name=updatenet,
+        caption=UpdateNet,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=6,
+        width=8,
+        depth=6
+        }
+    };
+
+\pic[shift={(-1,0,0)}] at (0,0,0) 
+    {Box={
+        name=resnet_template,
+        caption=ResNet50,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=12,
+        width=2,
+        depth=12
+        }
+    };
+
+\pic[shift={(-1,-8,0)}] at (0,0,0) 
+    {Box={
+        name=resnet_detection,
+        caption=ResNet50,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=12,
+        width=2,
+        depth=12
+        }
+    };
+
+\pic[shift={(1,0,0)}] at (0,0,0) 
+    {Box={
+        name=fm1_template,
+        caption=7x7x256,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=8,
+        width=4,
+        depth=8
+        }
+    };
+
+\pic[shift={(1,-8,0)}] at (0,0,0) 
+    {Box={
+        name=fm1_detection,
+        caption=31x31x256,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=8,
+        width=4,
+        depth=8
+        }
+    };
+
+\pic[shift={(3,1.5,0)}] at (0,0,0) 
+    {Box={
+        name=conv1_template,
+        caption=Conv,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=4,
+        width=2,
+        depth=4
+        }
+    };
+
+\pic[shift={(3,-6.5,0)}] at (0,0,0) 
+    {Box={
+        name=conv1_detection,
+        caption=Conv,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=4,
+        width=2,
+        depth=4
+        }
+    };
+
+\pic[shift={(3,-1.5,0)}] at (0,0,0) 
+    {Box={
+        name=conv2_template,
+        caption=Conv,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=4,
+        width=2,
+        depth=4
+        }
+    };
+
+\pic[shift={(3,-9.5,0)}] at (0,0,0) 
+    {Box={
+        name=conv2_detection,
+        caption=Conv,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=4,
+        width=2,
+        depth=4
+        }
+    };
+
+\pic[shift={(5,1.5,0)}] at (0,0,0) 
+    {Box={
+        name=fm11_template,
+        caption=5x5x256,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=6,
+        width=8,
+        depth=6
+        }
+    };
+
+\pic[shift={(5,-6.5,0)}] at (0,0,0) 
+    {Box={
+        name=fm11_detection,
+        caption=5x5x256,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=6,
+        width=8,
+        depth=6
+        }
+    };
+
+\pic[shift={(5,-1.5,0)}] at (0,0,0) 
+    {Box={
+        name=fm12_template,
+        caption=5x5x256,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=6,
+        width=8,
+        depth=6
+        }
+    };
+
+\pic[shift={(5,-9.5,0)}] at (0,0,0) 
+    {Box={
+        name=fm12_detection,
+        caption=5x5x256,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=6,
+        width=8,
+        depth=6
+        }
+    };
+
+\pic[shift={(8,0,0)}] at (0,0,0) 
+    {Box={
+        name=corr1,
+        caption=Corr,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=4,
+        width=2,
+        depth=4
+        }
+    };
+
+\pic[shift={(8,-8,0)}] at (0,0,0) 
+    {Box={
+        name=corr2,
+        caption=Corr,
+        xlabel={{ , }},
+        zlabel= ,
+        fill=\ConvColor,
+        height=4,
+        width=2,
+        depth=4
+        }
+    };
+
+\pic[shift={(10,0,0)}] at (0,0,0) 
+    {Box={
+        name=fm2_template,
+        caption=25x25x10,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=4,
+        width=6,
+        depth=4
+        }
+    };
+
+\pic[shift={(10,-8,0)}] at (0,0,0) 
+    {Box={
+        name=fm2_detection,
+        caption=25x25x256,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=4,
+        width=6,
+        depth=4
+        }
+    };
+
+\pic[shift={(13,0,0)}] at (0,0,0) 
+    {Box={
+        name=classification_conv,
+        caption=Classification Branch,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=6,
+        width=6,
+        depth=6
+        }
+    };
+
+\pic[shift={(13,-8,0)}] at (0,0,0) 
+    {Box={
+        name=attention_conv,
+        caption=Attention Branch,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=6,
+        width=6,
+        depth=6
+        }
+    };
+
+\pic[shift={(15,0,0)}] at (0,0,0) 
+    {Box={
+        name=fm3_template,
+        caption=3125x1,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=1,
+        width=8,
+        depth=1
+        }
+    };
+
+\pic[shift={(15,-8,0)}] at (0,0,0) 
+    {Box={
+        name=fm3_detection,
+        caption=3125x1,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=1,
+        width=8,
+        depth=1
+        }
+    };
+
+\pic[shift={(17,-4,0)}] at (0,0,0) 
+    {Ball={
+        name=weighted_sum,
+        fill=\SumColor,
+        opacity=0.6,
+        radius=2,
+        logo=$+$
+        }
+    };
+
+\pic[shift={(18,-4,0)}] at (0,0,0) 
+    {Box={
+        name=output,
+        caption=Output,
+        xlabel={{, }},
+        zlabel=,
+        fill=\ConvColor,
+        height=1,
+        width=8,
+        depth=1
+        }
+    };
+
+\draw [connection]  (template_0-east)    -- node {\midarrow} (updatenet-west);
+
+\draw [connection]  (template_i-1-east)    -- node {\midarrow} (updatenet-west);
+
+\draw [connection]  (template_i-east)    -- node {\midarrow} (updatenet-west);
+
+\draw [connection]  (updatenet-east)    -- node {\midarrow} (resnet_template-west);
+
+\draw [connection]  (template_i-east)    -- node {\midarrow} (resnet_detection-west);
+
+\draw [connection]  (resnet_template-east)    -- node {\midarrow} (fm1_template-west);
+
+\draw [connection]  (resnet_detection-east)    -- node {\midarrow} (fm1_detection-west);
+
+\draw [connection]  (fm1_template-east)    -- node {\midarrow} (conv1_template-west);
+
+\draw [connection]  (fm1_detection-east)    -- node {\midarrow} (conv2_template-west);
+
+\draw [connection]  (fm1_template-east)    -- node {\midarrow} (conv1_detection-west);
+
+\draw [connection]  (fm1_detection-east)    -- node {\midarrow} (conv2_detection-west);
+
+\draw [connection]  (conv1_template-east)    -- node {\midarrow} (fm11_template-west);
+
+\draw [connection]  (conv1_detection-east)    -- node {\midarrow} (fm11_detection-west);
+
+\draw [connection]  (conv2_template-east)    -- node {\midarrow} (fm12_template-west);
+
+\draw [connection]  (conv2_detection-east)    -- node {\midarrow} (fm12_detection-west);
+
+\draw [connection]  (fm11_template-east)    -- node {\midarrow} (corr1-west);
+
+\draw [connection]  (fm12_template-east)    -- node {\midarrow} (corr1-west);
+
+\draw [connection]  (fm11_detection-east)    -- node {\midarrow} (corr2-west);
+
+\draw [connection]  (fm12_detection-east)    -- node {\midarrow} (corr2-west);
+
+\draw [connection]  (corr1-east)    -- node {\midarrow} (fm2_template-west);
+
+\draw [connection]  (corr2-east)    -- node {\midarrow} (fm2_detection-west);
+
+\draw [connection]  (fm2_template-east)    -- node {\midarrow} (classification_conv-west);
+
+\draw [connection]  (fm2_detection-east)    -- node {\midarrow} (attention_conv-west);
+
+\draw [connection]  (classification_conv-east)    -- node {\midarrow} (fm3_template-west);
+
+\draw [connection]  (attention_conv-east)    -- node {\midarrow} (fm3_detection-west);
+
+\draw [connection]  (fm3_template-east)    -- node {\midarrow} (weighted_sum-west);
+
+\draw [connection]  (fm3_detection-east)    -- node {\midarrow} (weighted_sum-west);
+
+\draw [connection]  (weighted_sum-east)    -- node {\midarrow} (output-west);
+
+\end{tikzpicture}
+\end{document}
